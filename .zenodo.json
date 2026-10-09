@@ -1,0 +1,22 @@
+{
+  "title": "<SOFTWARE TITLE - TO FILL>",
+  "description": "LabWorkstation: a web-based laboratory workstation reservation and usage-accounting platform for university teaching laboratories. It manages laboratory rooms, workstation layout modelling (seat/door/window primitives), reservation requests and approvals, monthly rental accounting, occupancy history with two-stage conflict detection, role-based access control and operation auditing.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "version": "1.0.0",
+  "keywords": [
+    "laboratory management",
+    "workstation reservation",
+    "usage accounting",
+    "Spring Boot",
+    "Vue 3"
+  ],
+  "creators": [
+    {
+      "name": "Gao, Tian",
+      "affiliation": "<AFFILIATION - TO FILL>"
+    }
+  ],
+  "related_identifiers": []
+}

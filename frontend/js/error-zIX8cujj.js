@@ -1,0 +1,1 @@
+import{en as e}from"./vue-core-Cvh10b_J.js";var t=[``,`default`,`small`,`large`],n={large:40,default:32,small:24},r=class extends Error{constructor(e){super(e),this.name=`ElementPlusError`}};function i(e,t){throw new r(`[${e}] ${t}`)}function a(t,n){{let i=e(t)?new r(`[${t}] ${n}`):t;console.warn(i)}}export{t as i,i as n,n as r,a as t};

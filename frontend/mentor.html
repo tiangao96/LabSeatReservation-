@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>导师查询 · 公共工位预约及管理系统</title>
+<style>
+  :root{
+    --bg:#f4f7f9; --card:#fff; --line:#e5e7eb; --txt:#1f2329; --sub:#6b7280; --muted:#9ca3af;
+    --primary:#1677ff; --primary-weak:#e8f1ff;
+    --ok:#16a34a; --ok-bg:#e8f7ee; --warn:#d97706; --warn-bg:#fdf3e3;
+    --info:#2563eb; --info-bg:#e8efff; --gray:#6b7280; --gray-bg:#f1f3f5;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--txt);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .mp-wrap{max-width:1180px;margin:0 auto;padding:18px 18px 40px}
+  /* ---------- 头部 ---------- */
+  .mp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+  .mp-title{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:600}
+  .mp-title svg{width:22px;height:22px;stroke:var(--primary)}
+  .mp-sub{color:var(--sub);font-size:13px;margin-top:3px}
+  .mp-stat-mini{display:flex;gap:8px;flex-wrap:wrap}
+  .mp-chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--sub)}
+  .mp-chip b{color:var(--txt);font-weight:600}
+  /* ---------- 搜索 ---------- */
+  .mp-search{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:relative;z-index:5;margin-bottom:8px}
+  .mp-iw{position:relative;flex:1 1 320px;min-width:220px}
+  .mp-iw input{
+    width:100%;height:40px;padding:0 36px 0 38px;border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--card);font-size:14px;outline:none;color:var(--txt);
+  }
+  .mp-iw input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-weak)}
+  .mp-iw .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--muted)}
+  .mp-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;padding:2px 4px;display:none}
+  .mp-clear:hover{color:var(--txt)}
+  .mp-btn{
+    height:40px;padding:0 20px;border:0;border-radius:var(--radius);background:var(--primary);color:#fff;
+    font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;
+  }
+  .mp-btn:hover{background:#0f62d9}
+  .mp-btn.ghost{background:var(--card);color:var(--sub);border:1px solid var(--line)}
+  .mp-btn.ghost:hover{color:var(--txt);border-color:#cbd5e1}
+  /* 候选下拉 */
+  .mp-sug{
+    position:absolute;left:0;right:0;top:46px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:0 10px 26px rgba(15,23,42,.10);max-height:290px;overflow:auto;display:none;
+  }
+  .mp-sug.on{display:block}
+  .mp-sug .it{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 13px;cursor:pointer}
+  .mp-sug .it:hover,.mp-sug .it.on{background:#f8fafc}
+  .mp-sug .it .nm{font-weight:500}
+  .mp-sug .it .ct{color:var(--muted);font-size:12.5px;white-space:nowrap}
+  .mp-sug .empty{padding:12px 13px;color:var(--muted)}
+  /* ---------- 状态行 ---------- */
+  .mp-status{color:var(--sub);font-size:13px;min-height:22px;margin:2px 0 12px}
+  .mp-status.err{color:#dc2626}
+  /* ---------- 热门 ---------- */
+  .mp-hot{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+  .mp-hot .lb{color:var(--muted);font-size:12.5px;margin-right:2px}
+  .mp-hot button{
+    border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px;font-size:13px;
+    color:var(--txt);cursor:pointer;
+  }
+  .mp-hot button:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-weak)}
+  .mp-hot button span{color:var(--muted);margin-left:4px;font-size:12px}
+  /* ---------- 导师摘要 ---------- */
+  .mp-hero{
+    background:linear-gradient(135deg,#1677ff,#3b8cff);color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:18px;
+    display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  }
+  .mp-hero .who{display:flex;align-items:center;gap:13px}
+  .mp-ava{
+    width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;
+    font-size:18px;font-weight:600;flex:0 0 auto;
+  }
+  .mp-hero .nm{font-size:19px;font-weight:600}
+  .mp-hero .rl{font-size:12.5px;opacity:.85;margin-top:2px}
+  .mp-kpi{display:flex;gap:26px;flex-wrap:wrap}
+  .mp-kpi div{text-align:right}
+  .mp-kpi b{display:block;font-size:22px;font-weight:600;line-height:1.2}
+  .mp-kpi span{font-size:12.5px;opacity:.85}
+  /* ---------- 区块标题 ---------- */
+  .mp-sec{display:flex;align-items:center;gap:9px;margin:22px 0 11px}
+  .mp-sec h2{font-size:15.5px;font-weight:600;margin:0}
+  .mp-sec .n{background:var(--gray-bg);color:var(--sub);border-radius:999px;padding:1px 9px;font-size:12px}
+  /* ---------- 实验室卡片 ---------- */
+  .mp-labs{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}
+  .mp-lab{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px;cursor:pointer;
+    transition:.15s;position:relative;overflow:hidden;
+  }
+  .mp-lab:hover{border-color:var(--primary);box-shadow:0 4px 14px rgba(22,119,255,.10);transform:translateY(-1px)}
+  .mp-lab .hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .mp-lab .code{font-size:16px;font-weight:600}
+  .mp-lab .nm2{color:var(--sub);font-size:12.5px;margin-top:1px}
+  .mp-lab .row{display:flex;gap:16px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  .mp-lab .row div{font-size:12.5px;color:var(--sub)}
+  .mp-lab .row b{display:block;font-size:15px;color:var(--txt);font-weight:600}
+  .mp-lab .bar{height:5px;border-radius:3px;background:var(--gray-bg);margin-top:11px;overflow:hidden}
+  .mp-lab .bar i{display:block;height:100%;background:var(--ok);border-radius:3px}
+  .mp-lab .hd .tag{font-size:11.5px;color:var(--primary);background:#f2f7ff;border:1px solid #dce9fb;border-radius:999px;padding:1px 8px;white-space:nowrap}
+  .mp-lab .ft{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px}
+  .mp-lab .ft .go{color:var(--primary);font-weight:600}
+  .mp-lab .ft .jmp{color:var(--muted);cursor:pointer}
+  .mp-lab .ft .jmp:hover{color:var(--primary);text-decoration:underline}
+  .mp-labgroup .gh .fp{margin-left:auto;font-size:12.5px;color:var(--primary);cursor:pointer;border:1px solid #dce9fb;background:#f2f7ff;border-radius:999px;padding:2px 10px;font-weight:500}
+  .mp-labgroup .gh .fp:hover{background:#e8f1ff}
+  /* ---------- 工位卡片 ---------- */
+  .mp-labgroup{margin-bottom:14px}
+  .mp-labgroup .gh{
+    display:flex;align-items:center;gap:9px;padding:8px 2px;font-size:13.5px;color:var(--sub);
+    border-bottom:1px solid var(--line);margin-bottom:11px;
+  }
+  .mp-labgroup .gh b{color:var(--txt);font-size:14.5px}
+  .mp-seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:9px}
+  .mp-seat{
+    background:var(--card);border:1px solid var(--line);border-left-width:3px;border-radius:9px;padding:9px 11px;
+  }
+  .mp-seat .c{font-weight:600;font-size:13.5px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .mp-seat .s{font-size:11.5px;border-radius:4px;padding:1px 6px;font-weight:500;white-space:nowrap}
+  .mp-seat .u{font-size:12.5px;color:var(--sub);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .st-OCCUPIED{border-left-color:var(--ok)}    .st-OCCUPIED .s{background:var(--ok-bg);color:var(--ok)}
+  .st-IDLE{border-left-color:var(--info)}      .st-IDLE .s{background:var(--info-bg);color:var(--info)}
+  .st-PRE_RESERVED{border-left-color:var(--warn)} .st-PRE_RESERVED .s{background:var(--warn-bg);color:var(--warn)}
+  .st-MAINTENANCE{border-left-color:#f97316}   .st-MAINTENANCE .s{background:#fef0e6;color:#ea580c}
+  .st-DISABLED{border-left-color:var(--gray)}  .st-DISABLED .s{background:var(--gray-bg);color:var(--gray)}
+  /* ---------- 空态 ---------- */
+  .mp-empty{
+    background:var(--card);border:1px dashed var(--line);border-radius:var(--radius);padding:44px 20px;text-align:center;color:var(--muted);
+  }
+  .mp-empty svg{width:34px;height:34px;stroke:#cbd5e1;margin-bottom:10px}
+  .mp-empty .t{font-size:14px;color:var(--sub);margin-bottom:4px}
+  .mp-empty .d{font-size:12.5px}
+  @media (max-width:640px){
+    .mp-hero{padding:15px}
+    .mp-kpi{gap:18px}
+    .mp-kpi b{font-size:19px}
+  }
+</style>
+</head>
+<body>
+<div class="mp-wrap">
+  <div class="mp-head">
+    <div>
+      <div class="mp-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+        </svg>
+        导师查询
+      </div>
+      <div class="mp-sub">输入导师姓名，查看其名下的工位与实验室分布</div>
+    </div>
+    <div class="mp-stat-mini" id="mpMini"></div>
+  </div>
+
+  <div class="mp-search">
+    <div class="mp-iw">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+      </svg>
+      <input id="mpQ" type="text" placeholder="输入导师姓名，如：苏娜" autocomplete="off" spellcheck="false">
+      <button class="mp-clear" id="mpClr" title="清空">✕</button>
+      <div class="mp-sug" id="mpSug"></div>
+    </div>
+    <button class="mp-btn" id="mpGo">查询</button>
+    <button class="mp-btn ghost" id="mpRe">刷新数据</button>
+  </div>
+
+  <div class="mp-status" id="mpStatus">正在加载实验室与工位数据…</div>
+  <div class="mp-hot" id="mpHot" style="display:none"></div>
+  <div id="mpRes"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var API_LABS = '/api/public/labs';
+  var API_WS   = function (id) { return '/api/public/labs/' + encodeURIComponent(id) + '/workstations'; };
+  var API_MG   = '/api/public/mentor-groups';
+
+  var ST = {
+    OCCUPIED:     '占用',
+    IDLE:         '空闲',
+    PRE_RESERVED: '预占',
+    MAINTENANCE:  '维护',
+    DISABLED:     '停用'
+  };
+  var ORDER = { OCCUPIED: 0, PRE_RESERVED: 1, IDLE: 2, MAINTENANCE: 3, DISABLED: 4 };
+
+  var LABS = [];      // 实验室
+  var SEATS = [];     // 全部工位(含所属实验室)
+  var MENTORS = [];   // {name, total, occupied}
+  var loaded = false;
+  var curName = '';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  function getJSON(url) {
+    return fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'omit' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { return (j && j.data !== undefined) ? j.data : j; });
+  }
+
+  /* -------- 跳转工位视图(平面图)并高亮该导师工位 --------
+   * 注意:故意**不带** auto=1。线上高亮逻辑里 auto=1 会在“本实验室一个都没
+   * 匹配上”时自动跳到该导师涉及的另一个实验室,表现为“我点 404B 它自己跑去
+   * 724B”。这里只做“去我看的那个实验室 + 高亮”,跨实验室切换交给顶部快捷条。
+   */
+  function fpHash(labNano, mentor, groups) {
+    var list = groups || [];
+    var u = '#/lab/workstations/' + encodeURIComponent(labNano) +
+            '?m=' + encodeURIComponent(mentor);
+    if (list.length > 1) {
+      var ml = list.map(function (g) { return g.nano + ':' + g.code; }).join(',');
+      u += '&ml=' + encodeURIComponent(ml);
+    }
+    return u;
+  }
+  function openFP(labNano, mentor, groups) {
+    if (!labNano) return 'nano-missing';
+    var u = fpHash(labNano, mentor, groups);
+    // 1) 本页内嵌在系统里(同源父窗口)→ 直接切父窗口路由,不新开标签
+    try {
+      if (window.parent && window.parent !== window && window.parent.location) {
+        window.parent.location.hash = u;
+        return 'parent';
+      }
+    } catch (e) {}
+    // 2) 独立打开本页 → 新标签跳进系统的工位视图
+    try {
+      var base = location.origin + location.pathname.replace(/[^\/]*$/, '');
+      window.open(base + u, '_blank');
+      return 'window';
+    } catch (e) { return 'fail'; }
+  }
+
+  /* ---------------- 载入 ---------------- */
+  function loadAll() {
+    loaded = false;
+    $('mpStatus').className = 'mp-status';
+    $('mpStatus').textContent = '正在加载实验室与工位数据…';
+    return getJSON(API_LABS).then(function (labs) {
+      LABS = Array.isArray(labs) ? labs : [];
+      return Promise.all(LABS.map(function (l) {
+        var id = l.nanoId || l.id;
+        return getJSON(API_WS(id)).then(function (arr) {
+          return (Array.isArray(arr) ? arr : []).map(function (w) {
+            w.__labNano = id;
+            w.__labCode = l.code || l.location || l.name || '';
+            w.__labName = l.name || '';
+            w.__labArea = l.area;
+            w.__labCap  = l.capacity;
+            return w;
+          });
+        }).catch(function () { return []; });
+      }));
+    }).then(function (groups) {
+      SEATS = [];
+      groups.forEach(function (g) { SEATS = SEATS.concat(g); });
+      buildMentors();
+      loaded = true;
+      var seatN = SEATS.filter(function (s) { return s.type === 'SEAT'; }).length;
+      var occN  = SEATS.filter(function (s) { return s.type === 'SEAT' && s.status === 'OCCUPIED'; }).length;
+      $('mpMini').innerHTML =
+        '<span class="mp-chip">实验室 <b>' + LABS.length + '</b></span>' +
+        '<span class="mp-chip">工位 <b>' + seatN + '</b></span>' +
+        '<span class="mp-chip">已占用 <b>' + occN + '</b></span>' +
+        '<span class="mp-chip">导师 <b>' + MENTORS.length + '</b></span>';
+      $('mpStatus').textContent = '数据已就绪，共 ' + seatN + ' 个工位。请输入导师姓名查询。';
+      $('mpStatus').className = 'mp-status';
+      renderHot();
+      if (curName) doQuery(curName, true);
+    }).catch(function (e) {
+      $('mpStatus').className = 'mp-status err';
+      $('mpStatus').textContent = '数据加载失败：' + e.message + '（请点「刷新数据」重试）';
+    });
+  }
+
+  function buildMentors() {
+    var map = {};
+    SEATS.forEach(function (s) {
+      if (s.type !== 'SEAT') return;
+      var n = (s.occupantMentorGroupName || '').trim();
+      if (!n) return;
+      if (!map[n]) map[n] = { name: n, total: 0, occupied: 0 };
+      map[n].total++;
+      if (s.status === 'OCCUPIED') map[n].occupied++;
+    });
+    MENTORS = Object.keys(map).map(function (k) { return map[k]; });
+    MENTORS.sort(function (a, b) { return b.total - a.total || a.name.localeCompare(b.name, 'zh'); });
+  }
+
+  /* ---------------- 候选 ---------------- */
+  function suggest(kw) {
+    kw = (kw || '').trim().toLowerCase();
+    if (!kw) return [];
+    var out = MENTORS.filter(function (m) { return m.name.toLowerCase().indexOf(kw) >= 0; });
+    out.sort(function (a, b) {
+      var ai = a.name.toLowerCase().indexOf(kw), bi = b.name.toLowerCase().indexOf(kw);
+      return ai - bi || b.total - a.total;
+    });
+    return out.slice(0, 12);
+  }
+
+  var sugBox = $('mpSug'), qEl = $('mpQ');
+  var sugIdx = -1, sugList = [];
+
+  function drawSug() {
+    var kw = qEl.value.trim();
+    $('mpClr').style.display = kw ? 'block' : 'none';
+    if (!kw) { sugBox.className = 'mp-sug'; sugList = []; return; }
+    sugList = suggest(kw);
+    sugIdx = -1;
+    if (!sugList.length) {
+      sugBox.innerHTML = '<div class="empty">没有匹配的导师</div>';
+    } else {
+      sugBox.innerHTML = sugList.map(function (m, i) {
+        return '<div class="it" data-i="' + i + '"><span class="nm">' + esc(m.name) +
+               '</span><span class="ct">' + m.total + ' 个工位 · 占用 ' + m.occupied + '</span></div>';
+      }).join('');
+    }
+    sugBox.className = 'mp-sug on';
+  }
+  function hideSug() { sugBox.className = 'mp-sug'; sugIdx = -1; }
+
+  qEl.addEventListener('input', drawSug);
+  qEl.addEventListener('focus', function () { if (qEl.value.trim()) drawSug(); });
+  qEl.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (sugBox.className.indexOf('on') < 0 || !sugList.length) return;
+      e.preventDefault();
+      sugIdx = e.key === 'ArrowDown'
+        ? Math.min(sugIdx + 1, sugList.length - 1)
+        : Math.max(sugIdx - 1, 0);
+      [].forEach.call(sugBox.querySelectorAll('.it'), function (el, i) {
+        el.className = 'it' + (i === sugIdx ? ' on' : '');
+      });
+    } else if (e.key === 'Enter') {
+      if (sugIdx >= 0 && sugList[sugIdx]) { qEl.value = sugList[sugIdx].name; }
+      hideSug(); doQuery(qEl.value);
+    } else if (e.key === 'Escape') { hideSug(); }
+  });
+  sugBox.addEventListener('mousedown', function (e) {
+    var it = e.target.closest ? e.target.closest('.it') : null;
+    if (!it) return;
+    e.preventDefault();
+    var i = +it.getAttribute('data-i');
+    if (sugList[i]) { qEl.value = sugList[i].name; hideSug(); doQuery(qEl.value); }
+  });
+  $('mpClr').addEventListener('click', function () {
+    qEl.value = ''; drawSug(); qEl.focus(); curName = ''; $('mpHot').style.display = 'flex'; $('mpRes').innerHTML = '';
+    $('mpStatus').textContent = '请输入导师姓名查询。';
+    $('mpStatus').className = 'mp-status';
+  });
+  $('mpGo').addEventListener('click', function () { hideSug(); doQuery(qEl.value); });
+  $('mpRe').addEventListener('click', function () { loadAll(); });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('.mp-iw')) hideSug();
+  });
+
+  function renderHot() {
+    var hot = $('mpHot');
+    if (!MENTORS.length) { hot.style.display = 'none'; return; }
+    hot.style.display = 'flex';
+    hot.innerHTML = '<span class="lb">工位较多的导师：</span>' + MENTORS.slice(0, 10).map(function (m) {
+      return '<button data-n="' + esc(m.name) + '">' + esc(m.name) + '<span>' + m.total + '</span></button>';
+    }).join('');
+    [].forEach.call(hot.querySelectorAll('button'), function (b) {
+      b.addEventListener('click', function () {
+        var n = b.getAttribute('data-n');
+        qEl.value = n; hideSug(); doQuery(n);
+      });
+    });
+  }
+
+  /* ---------------- 查询 ---------------- */
+  function nameEq(a, b) { return (a || '').trim() === (b || '').trim(); }
+
+  function doQuery(raw, silent) {
+    var name = (raw || '').trim();
+    if (!name) {
+      $('mpStatus').className = 'mp-status err';
+      $('mpStatus').textContent = '请输入导师姓名后再查询。';
+      return;
+    }
+    if (!loaded) {
+      $('mpStatus').className = 'mp-status err';
+      $('mpStatus').textContent = '数据尚未加载完成，请稍候…';
+      return;
+    }
+    curName = name;
+    hideSug();
+    $('mpHot').style.display = 'none';
+
+    var mine = SEATS.filter(function (s) { return s.type === 'SEAT' && nameEq(s.occupantMentorGroupName, name); });
+    if (!mine.length) {
+      var known = MENTORS.filter(function (m) { return m.name.indexOf(name) >= 0; });
+      var hint = known.length ? '你是不是想找：' + known.slice(0, 5).map(function (m) { return m.name; }).join('、') + '？' : '';
+      $('mpStatus').className = 'mp-status err';
+      $('mpStatus').textContent = '未找到导师「' + name + '」名下的工位。' + hint;
+      $('mpRes').innerHTML =
+        '<div class="mp-empty">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>' +
+        '<div class="t">没有查询到「' + esc(name) + '」名下的工位</div>' +
+        '<div class="d">' + (hint ? esc(hint) : '请确认姓名拼写，或从上方的候选列表中选择。') + '</div></div>';
+      return;
+    }
+
+    // 按实验室分组
+    var byLab = {};
+    mine.forEach(function (s) {
+      var k = s.__labNano;
+      if (!byLab[k]) byLab[k] = { nano: k, code: s.__labCode, name: s.__labName, area: s.__labArea, cap: s.__labCap, seats: [] };
+      byLab[k].seats.push(s);
+    });
+    var groups = Object.keys(byLab).map(function (k) { return byLab[k]; });
+    groups.sort(function (a, b) { return b.seats.length - a.seats.length || String(a.code).localeCompare(String(b.code)); });
+    groups.forEach(function (g) {
+      g.seats.sort(function (a, b) {
+        var d = (ORDER[a.status] == null ? 9 : ORDER[a.status]) - (ORDER[b.status] == null ? 9 : ORDER[b.status]);
+        return d || String(a.code).localeCompare(String(b.code), 'zh', { numeric: true });
+      });
+    });
+
+    var total = mine.length;
+    var occupied = mine.filter(function (s) { return s.status === 'OCCUPIED'; }).length;
+    var students = {};
+    mine.forEach(function (s) {
+      var u = (s.occupantName || s.manualOccupantName || '').trim();
+      if (u && s.status === 'OCCUPIED') students[u] = 1;
+    });
+    var stuN = Object.keys(students).length;
+
+    $('mpStatus').className = 'mp-status';
+    $('mpStatus').textContent = '已找到「' + name + '」名下 ' + total + ' 个工位，分布于 ' + groups.length + ' 个实验室。' + (silent ? '' : '');
+
+    var html = '';
+    // 摘要卡
+    html += '<div class="mp-hero">' +
+      '<div class="who"><div class="mp-ava">' + esc(name.slice(0, 1)) + '</div>' +
+      '<div><div class="nm">' + esc(name) + '</div><div class="rl">导师 · 名下工位分布</div></div></div>' +
+      '<div class="mp-kpi">' +
+      '<div><b>' + total + '</b><span>工位</span></div>' +
+      '<div><b>' + occupied + '</b><span>已占用</span></div>' +
+      '<div><b>' + stuN + '</b><span>学生</span></div>' +
+      '<div><b>' + groups.length + '</b><span>实验室</span></div>' +
+      '</div></div>';
+
+    // 实验室卡片
+    html += '<div class="mp-sec"><h2>实验室</h2><span class="n">' + groups.length + '</span></div>';
+    html += '<div class="mp-labs">' + groups.map(function (g) {
+      var occ = g.seats.filter(function (s) { return s.status === 'OCCUPIED'; }).length;
+      var pct = g.seats.length ? Math.round(occ * 100 / g.seats.length) : 0;
+      return '<div class="mp-lab" data-lab="' + esc(g.code) + '" data-nano="' + esc(g.nano) + '" title="点击查看该实验室平面图，并高亮该导师的工位">' +
+        '<div class="hd"><div><div class="code">' + esc(g.code) + '</div>' +
+        '<div class="nm2">' + esc(g.name || g.code) + '</div></div>' +
+        '<span class="tag">平面图 →</span></div>' +
+        '<div class="row">' +
+        '<div>该导师工位<b>' + g.seats.length + '</b></div>' +
+        '<div>已占用<b>' + occ + '</b></div>' +
+        (g.area != null ? '<div>面积<b>' + g.area + ' ㎡</b></div>' : '') +
+        (g.cap != null ? '<div>容量<b>' + g.cap + '</b></div>' : '') +
+        '</div>' +
+        '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="ft"><span class="go">查看该导师工位在平面图上的位置 →</span>' +
+        '<span class="jmp" data-lab="' + esc(g.code) + '">本页工位 ↓</span></div>' +
+        '</div>';
+    }).join('') + '</div>';
+
+    // 工位卡片
+    html += '<div class="mp-sec"><h2>工位</h2><span class="n">' + total + '</span></div>';
+    groups.forEach(function (g) {
+      html += '<div class="mp-labgroup" id="mpg-' + esc(g.code) + '" data-nano="' + esc(g.nano) + '">' +
+        '<div class="gh"><b>' + esc(g.code) + '</b><span>' + (g.name && g.name !== g.code ? esc(g.name) : '') + '</span>' +
+        '<span class="n">' + g.seats.length + ' 个</span>' +
+        '<span class="fp" data-nano="' + esc(g.nano) + '">平面图 →</span></div>' +
+        '<div class="mp-seats">' + g.seats.map(function (s) {
+          var st = s.status || '';
+          var user = (s.occupantName || s.manualOccupantName || '').trim();
+          return '<div class="mp-seat st-' + esc(st) + '">' +
+            '<div class="c"><span>' + esc(s.code) + '</span><span class="s">' + esc(ST[st] || st) + '</span></div>' +
+            '<div class="u">' + (user ? esc(user) : '<span style="color:#cbd5e1">—</span>') + '</div>' +
+            '</div>';
+        }).join('') + '</div></div>';
+    });
+
+    $('mpRes').innerHTML = html;
+
+    // 房间卡片 → 该实验室工位视图(平面图)并高亮该导师工位
+    [].forEach.call($('mpRes').querySelectorAll('.mp-lab'), function (el) {
+      el.addEventListener('click', function () {
+        openFP(el.getAttribute('data-nano'), name, groups);
+      });
+    });
+    // 「本页工位 ↓」次级:页内滚动,不跳转
+    [].forEach.call($('mpRes').querySelectorAll('.mp-lab .jmp'), function (el) {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var t = document.getElementById('mpg-' + el.getAttribute('data-lab'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    // 工位分组标题右侧「平面图 →」
+    [].forEach.call($('mpRes').querySelectorAll('.mp-labgroup .fp'), function (el) {
+      el.addEventListener('click', function () {
+        openFP(el.getAttribute('data-nano'), name, groups);
+      });
+    });
+
+    try { console.log('[mentor] rendered ' + total + ' seats / ' + groups.length + ' labs for ' + name); } catch (e) {}
+  }
+
+  loadAll();
+})();
+</script>
+</body>
+</html>

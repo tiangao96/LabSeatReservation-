@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学生工位申请 - 公共工位预约及管理系统</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: #f0f4f8; color: #1f2d3d; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #1e5799, #2989d8); color: #fff; padding: 22px 0; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+  .header h1 { font-size: 22px; letter-spacing: 2px; }
+  .header p { font-size: 13px; opacity: .85; margin-top: 6px; }
+  .wrap { max-width: 860px; margin: 24px auto; padding: 0 16px; }
+  .card { background: #fff; border-radius: 10px; padding: 24px 28px; margin-bottom: 18px; box-shadow: 0 1px 6px rgba(0,0,0,.08); }
+  .card h2 { font-size: 16px; color: #1e5799; border-left: 4px solid #2989d8; padding-left: 10px; margin-bottom: 16px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; }
+  .form-item { display: flex; flex-direction: column; }
+  .form-item.full { grid-column: 1 / -1; }
+  label { font-size: 13px; color: #5a6b7b; margin-bottom: 6px; }
+  label .req { color: #e5484d; margin-left: 2px; }
+  input[type=text], input[type=number], select, input[type=month] {
+    height: 38px; border: 1px solid #c8d4de; border-radius: 6px; padding: 0 10px; font-size: 14px; color: #1f2d3d; outline: none; background: #fff; width: 100%;
+  }
+  input:focus, select:focus { border-color: #2989d8; box-shadow: 0 0 0 2px rgba(41,137,216,.18); }
+  .btn { display: inline-block; height: 40px; line-height: 40px; padding: 0 28px; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: #2989d8; color: #fff; }
+  .btn-primary:hover { background: #1e6fae; }
+  .btn-primary:disabled { background: #9db8cd; cursor: not-allowed; }
+  .btn-ghost { background: #eef3f8; color: #3a5268; }
+  .btn-ghost:hover { background: #dde8f2; }
+  .btn-row { margin-top: 18px; text-align: right; }
+  .tip { font-size: 12px; color: #8a9baa; margin-top: 4px; }
+  .step-tag { display: inline-block; background: #e8f2fc; color: #1e5799; border-radius: 12px; font-size: 12px; padding: 2px 10px; margin-bottom: 12px; }
+  /* 工位分布图 */
+  .ws-canvas-wrap { overflow-x: auto; border: 1px solid #e3e9ef; border-radius: 8px; background: #f8fafc; padding: 12px; }
+  .ws-canvas { position: relative; margin: 0 auto; }
+  .ws-cell { position: absolute; border: 2px solid #c8d4de; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all .12s; background: #f8fafc; box-sizing: border-box; overflow: hidden; }
+  .ws-cell:hover { border-color: #2989d8; box-shadow: 0 0 0 2px rgba(41,137,216,.25); }
+  .ws-cell .code { font-size: 13px; font-weight: 600; color: #1f2d3d; line-height: 1.2; text-align: center; padding: 0 2px; }
+  .ws-cell .st { font-size: 11px; color: #8a9baa; line-height: 1.2; text-align: center; padding: 0 2px; }
+  .ws-cell.idle { border-style: solid; border-color: #52a84b; background: #eefaf0; }
+  .ws-cell.idle:hover { background: #ddf5e2; }
+  .ws-cell.sel { border-color: #2989d8; background: #e4f0fb; box-shadow: 0 0 0 3px rgba(41,137,216,.35); }
+  .ws-cell.occ, .ws-cell.no { background: #f1f3f5; border-color: #dfe5ea; cursor: not-allowed; }
+  .ws-cell.occ { border-color: #d97706; background: #fdf3e7; }
+  .ws-cell.occ .st { color: #d97706; }
+  .ws-cell.no { border-color: #c8d4de; background: #f1f3f5; opacity: .8; }
+  .ws-cell.no .st { color: #6b7a89; }
+  .ws-cell.struct { border-style: dashed; border-color: #b0bec9; background: #eef1f4; color: #8a9baa; cursor: not-allowed; }
+  .ws-cell.struct .code { color: #8a9baa; font-weight: 500; }
+  .ws-legend { font-size: 12px; color: #5a6b7b; margin-top: 10px; }
+  .ws-legend span { margin-right: 14px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+  .d-idle { background: #52a84b; } .d-occ { background: #d97706; } .d-no { background: #c0392b; } .d-dis { background: #8a9baa; }
+  .tip-grade { color: #52a84b; font-size: 12px; margin-top: 4px; }
+  .result-box { text-align: center; padding: 12px 0 4px; }
+  .result-box .big { font-size: 18px; color: #1e5799; font-weight: 600; margin: 10px 0; }
+  .result-box .no { font-size: 20px; color: #e5484d; font-weight: 700; letter-spacing: 1px; }
+  .msg { font-size: 13px; padding: 10px 14px; border-radius: 6px; margin-top: 12px; display: none; }
+  .msg.err { background: #fdecec; color: #c0392b; display: block; }
+  .msg.ok { background: #e8f7ec; color: #1e7d3c; display: block; }
+  .query-row { display: flex; gap: 10px; }
+  .query-row input { flex: 1; }
+  .query-list { margin-top: 14px; }
+  .query-item { border: 1px solid #e3e9ef; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; font-size: 13px; }
+  .query-item .q-line { margin: 3px 0; }
+  .badge { display: inline-block; border-radius: 10px; font-size: 12px; padding: 2px 10px; }
+  .b-pending { background: #fff3d6; color: #b7791f; }
+  .b-approved { background: #e6f6ea; color: #1e7d3c; }
+  .b-rejected { background: #fdecec; color: #c0392b; }
+  .b-cancelled { background: #eef1f4; color: #6b7a89; }
+  .footer { text-align: center; color: #9aa9b6; font-size: 12px; padding: 18px 0 30px; }
+  .loading { text-align: center; color: #5a6b7b; font-size: 13px; padding: 14px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>学生工位申请</h1>
+  <p>公共工位预约及管理系统 · 公开申请通道</p>
+</div>
+
+<div class="wrap">
+  <!-- 步骤一: 基本信息 -->
+  <div class="card" id="cardStep1">
+    <h2>1. 填写基本信息</h2>
+    <div class="form-grid">
+      <div class="form-item"><label>姓名<span class="req">*</span></label><input type="text" id="fName" maxlength="30" placeholder="请输入姓名"></div>
+      <div class="form-item"><label>学号<span class="req">*</span></label><input type="text" id="fNo" maxlength="20" placeholder="请输入学号"></div>
+      <div class="form-item"><label>年级<span class="req">*</span></label><input type="text" id="fGrade" maxlength="20" placeholder="如 2026级"><div class="tip-grade" id="gradeTip">输入学号后自动识别</div></div>
+      <div class="form-item"><label>导师姓名<span class="req">*</span></label><input type="text" id="fMentor" maxlength="30" placeholder="请输入导师姓名"></div>
+      <div class="form-item"><label>实验室<span class="req">*</span></label><select id="fLab"><option value="">请选择实验室</option></select></div>
+      <div class="form-item full"><label>预计使用到<span class="req">*</span></label><input type="month" id="fEndMonth"><div class="tip">选择预计使用到的年月，到期后系统将自动释放工位</div></div>
+    </div>
+    <div class="msg" id="msgStep1"></div>
+    <div class="btn-row"><button class="btn btn-primary" id="btnNext" onclick="nextStep()">下一步：选择工位</button></div>
+  </div>
+
+  <!-- 步骤二: 选工位 -->
+  <div class="card hidden" id="cardStep2">
+    <h2>2. 选择工位</h2>
+    <span class="step-tag" id="step2Lab"></span>
+    <div class="tip" style="margin-bottom:8px">以下为实验室工位分布图, 绿色为当前空闲可申请的工位, 点击选中</div>
+    <div class="loading" id="wsLoading">工位加载中...</div>
+    <div class="ws-canvas-wrap hidden" id="wsCanvasWrap"><div class="ws-canvas" id="wsCanvas"></div></div>
+    <div class="ws-legend hidden" id="wsLegend">
+      <span><i class="dot d-idle"></i>空闲(可选)</span>
+      <span><i class="dot d-occ"></i>已占用</span>
+      <span><i class="dot d-no"></i>维护/不可用</span>
+    </div>
+    <div class="msg" id="msgStep2"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="backStep1()">上一步</button>
+      <button class="btn btn-primary" id="btnSubmit" onclick="submitApply()">提交申请</button>
+    </div>
+  </div>
+
+  <!-- 步骤三: 结果 -->
+  <div class="card hidden" id="cardStep3">
+    <h2>3. 申请结果</h2>
+    <div class="result-box">
+      <div class="big" id="resultTitle">申请提交成功</div>
+      <div>您的申请编号：<span class="no" id="resultNo"></span></div>
+      <div class="tip" style="margin-top:10px">请等待管理员审批，审批通过后工位将直接显示为"占用中"。可凭学号或申请编号在下方查询申请进度。</div>
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="resetAll()">重新申请</button></div>
+  </div>
+
+  <!-- 查询 -->
+  <div class="card">
+    <h2>查询申请进度</h2>
+    <div class="query-row">
+      <input type="text" id="qNo" placeholder="输入学号或申请编号查询">
+      <button class="btn btn-primary" onclick="queryApply()">查询</button>
+    </div>
+    <div class="msg" id="msgQuery"></div>
+    <div class="query-list" id="qList"></div>
+  </div>
+</div>
+
+<div class="footer">公共工位预约及管理系统 · 如有问题请联系实验室管理员</div>
+
+<script>
+(function(){
+  var API = '/api/public';
+  var labs = [], wsList = [], selWs = null, selLab = null;
+
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function msg(id, text, ok){ var m = $(id); m.textContent = text; m.className = 'msg ' + (ok ? 'ok' : 'err'); }
+  function hideMsg(id){ $(id).className = 'msg'; }
+  function http(method, url, body){
+    return new Promise(function(resolve, reject){
+      var xhr = new XMLHttpRequest();
+      xhr.open(method, url, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function(){
+        if (xhr.readyState === 4) {
+          var j = null;
+          try { j = JSON.parse(xhr.responseText); } catch(e){}
+          if (xhr.status === 200 && j && j.code === 0) resolve(j.data);
+          else reject(j && j.message ? j.message : ('请求失败(' + xhr.status + ')'));
+        }
+      };
+      xhr.onerror = function(){ reject('网络错误，请稍后重试'); };
+      if (body) xhr.send(JSON.stringify(body)); else xhr.send();
+    });
+  }
+
+  function defaultEndMonth(gradeYear){
+    if (gradeYear) {
+      return (parseInt(gradeYear, 10) + 4) + '-06'; // 默认按本科4年, 毕业年6月
+    }
+    var d = new Date();
+    var y = d.getFullYear() + 1;
+    var m = 6;
+    return y + '-' + (m < 10 ? '0' + m : m);
+  }
+
+  function loadBase(){
+    $('fEndMonth').value = defaultEndMonth();
+    http('GET', API + '/labs').then(function(data){
+      labs = data || [];
+      var sel = $('fLab');
+      labs.forEach(function(l){
+        var o = document.createElement('option');
+        o.value = l.nanoId;
+        o.textContent = l.name + '(' + l.code + ')';
+        sel.appendChild(o);
+      });
+    }).catch(function(e){ msg('msgStep1', e, false); });
+  }
+
+  // 学号前4位=年份, 自动识别年级, 并联动「预计使用到」
+  var _applyManualEnd = false; // 用户手动改过「预计使用到」后不再自动覆盖
+  function applyEndByGrade(gradeText){
+    var m = String(gradeText || '').match(/(19\d{2}|20\d{2})/);
+    if (!m) return null;
+    var y = parseInt(m[1], 10);
+    if (y < 2000 || y > 2030) return null;
+    if (!_applyManualEnd) { $('fEndMonth').value = defaultEndMonth(m[1]); }
+    return m[1];
+  }
+  function gradeTipText(yText, tipEl, endEl){
+    if (_applyManualEnd) {
+      tipEl.textContent = '已按 ' + yText + ' 级识别; 「预计使用到」已手动设为 ' + (endEl.value || '') + ', 请确认';
+    } else {
+      tipEl.textContent = '已按 ' + yText + ' 级自动将「预计使用到」填为 ' + (endEl.value || '') + ' (默认本科4年毕业); 研究生请改为 ' + (parseInt(yText, 10) + 3) + '-06';
+    }
+  }
+  function bindAutoGrade(){
+    var noEl = $('fNo'), gradeEl = $('fGrade'), tipEl = $('gradeTip'), endEl = $('fEndMonth');
+    endEl.addEventListener('input', function(){ _applyManualEnd = true; });
+    noEl.addEventListener('input', function(){
+      var v = noEl.value.trim();
+      var m = v.match(/^(19\d{2}|20\d{2})/);
+      if (m) {
+        gradeEl.value = m[1] + '级';
+        var y = applyEndByGrade(m[1]);
+        gradeTipText(m[1], tipEl, endEl);
+        tipEl.style.color = '#52a84b';
+      } else {
+        tipEl.textContent = '学号前4位应为入学年份, 如 2025';
+        tipEl.style.color = '#e5484d';
+      }
+    });
+    gradeEl.addEventListener('input', function(){
+      var v = gradeEl.value.trim();
+      var m = v.match(/(19\d{2}|20\d{2})/);
+      if (m) {
+        var y = applyEndByGrade(m[1]);
+        if (y) { gradeTipText(m[1], tipEl, endEl); tipEl.style.color = '#52a84b'; }
+      }
+    });
+  }
+
+  window.nextStep = function(){
+    hideMsg('msgStep1');
+    var name = $('fName').value.trim(), no = $('fNo').value.trim(), grade = $('fGrade').value.trim(),
+        mentor = $('fMentor').value.trim(), lab = $('fLab').value, endM = $('fEndMonth').value;
+    if (!name || !no || !grade || !mentor || !lab || !endM) { msg('msgStep1', '请填写完整信息（带 * 为必填项）', false); return; }
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(endM)) { msg('msgStep1', '请选择有效的"预计使用到"月份', false); return; }
+    selLab = labs.filter(function(l){ return l.nanoId === lab; })[0] || null;
+    $('step2Lab').textContent = '实验室：' + (selLab ? selLab.name : '');
+    $('cardStep1').className = 'card hidden';
+    $('cardStep2').className = 'card';
+    $('wsLoading').className = 'loading';
+    $('wsCanvasWrap').className = 'ws-canvas-wrap hidden';
+    $('wsLegend').className = 'ws-legend hidden';
+    loadWs(lab);
+  };
+
+  window.backStep1 = function(){
+    $('cardStep2').className = 'card hidden';
+    $('cardStep1').className = 'card';
+  };
+
+  function loadWs(labNanoId){
+    http('GET', API + '/labs/' + labNanoId + '/workstations').then(function(data){
+      wsList = data || [];
+      renderWs();
+    }).catch(function(e){
+      $('wsLoading').textContent = '加载失败：' + e;
+    });
+  }
+
+  function renderWs(){
+    var wrap = $('wsCanvasWrap');
+    var canvas = $('wsCanvas');
+    canvas.innerHTML = '';
+    // 计算画布尺寸
+    var maxX = 0, maxY = 0;
+    wsList.forEach(function(w){
+      var x = (w.posX == null ? 0 : w.posX), y = (w.posY == null ? 0 : w.posY);
+      var wd = (w.width == null ? 128 : w.width), ht = (w.height == null ? 64 : w.height);
+      if (x + wd > maxX) maxX = x + wd;
+      if (y + ht > maxY) maxY = y + ht;
+    });
+    if (maxX < 100) maxX = 880; if (maxY < 100) maxY = 560;
+    // 缩放适配(最大宽 820)
+    var scale = Math.min(1, 820 / maxX);
+    var cw = Math.ceil(maxX * scale), ch = Math.ceil(maxY * scale);
+    canvas.style.width = cw + 'px';
+    canvas.style.height = ch + 'px';
+    wsList.forEach(function(w){
+      var cell = document.createElement('div');
+      var stText = '', cls = '';
+      var isSeat = w.type === 'SEAT' || w.type == null;
+      if (!isSeat) { cls = 'struct'; stText = w.description || w.type || ''; }
+      else if (w.status === 'IDLE' && !w.manualOccupantName) { cls = 'idle'; stText = '空闲可申请'; }
+      else if (w.status === 'OCCUPIED' || w.status === 'PRE_RESERVED' || (w.status === 'IDLE' && w.manualOccupantName)) { cls = 'occ'; stText = '已占用' + (w.occupantName ? '(' + w.occupantName + ')' : ''); }
+      else { cls = 'no'; stText = w.status || '不可用'; }
+      cell.className = 'ws-cell ' + cls;
+      var x = (w.posX == null ? 0 : w.posX) * scale, y = (w.posY == null ? 0 : w.posY) * scale;
+      var wd = (w.width == null ? 128 : w.width) * scale, ht = (w.height == null ? 64 : w.height) * scale;
+      cell.style.left = x + 'px'; cell.style.top = y + 'px';
+      cell.style.width = wd + 'px'; cell.style.height = ht + 'px';
+      var code = document.createElement('div'); code.className = 'code'; code.textContent = w.code;
+      var st = document.createElement('div'); st.className = 'st'; st.textContent = stText;
+      cell.appendChild(code); cell.appendChild(st);
+      if (isSeat && w.status === 'IDLE' && !w.manualOccupantName) {
+        cell.onclick = function(){
+          canvas.querySelectorAll('.ws-cell.sel').forEach(function(c){ c.classList.remove('sel'); });
+          cell.classList.add('sel');
+          selWs = w;
+        };
+      }
+      canvas.appendChild(cell);
+    });
+    $('wsLoading').className = 'loading hidden';
+    wrap.className = 'ws-canvas-wrap';
+    $('wsLegend').className = 'ws-legend';
+  }
+
+  window.submitApply = function(){
+    hideMsg('msgStep2');
+    if (!selWs) { msg('msgStep2', '请先选择一个空闲工位', false); return; }
+    $('btnSubmit').disabled = true;
+    $('btnSubmit').textContent = '提交中...';
+    var payload = {
+      labNanoId: selLab.nanoId,
+      workstationNanoId: selWs.nanoId,
+      studentName: $('fName').value.trim(),
+      studentNo: $('fNo').value.trim(),
+      gradeName: $('fGrade').value.trim(),
+      mentorName: $('fMentor').value.trim(),
+      endMonth: $('fEndMonth').value
+    };
+    http('POST', API + '/apply', payload).then(function(data){
+      $('cardStep2').className = 'card hidden';
+      $('cardStep3').className = 'card';
+      $('resultNo').textContent = data;
+    }).catch(function(e){
+      msg('msgStep2', '提交失败：' + e, false);
+    }).then(function(){
+      $('btnSubmit').disabled = false;
+      $('btnSubmit').textContent = '提交申请';
+    });
+  };
+
+  window.resetAll = function(){
+    $('cardStep3').className = 'card hidden';
+    $('cardStep1').className = 'card';
+    ['fName','fNo','fGrade','fMentor'].forEach(function(id){ $(id).value = ''; });
+    $('fLab').value = '';
+    $('fEndMonth').value = defaultEndMonth();
+    _applyManualEnd = false;
+    $('gradeTip').textContent = '输入学号后自动识别';
+    $('gradeTip').style.color = '';
+    selWs = null; selLab = null;
+  };
+
+  window.queryApply = function(){
+    var no = $('qNo').value.trim();
+    hideMsg('msgQuery');
+    if (!no) { msg('msgQuery', '请输入学号或申请编号', false); return; }
+    http('GET', API + '/applications?studentNo=' + encodeURIComponent(no)).then(function(data){
+      var list = $('qList');
+      list.innerHTML = '';
+      if (!data || !data.length) {
+        msg('msgQuery', '未查询到该学号/申请编号的记录', false);
+        return;
+      }
+      var badge = { PENDING: ['b-pending','待审批'], APPROVED: ['b-approved','已通过(工位已占用)'], REJECTED: ['b-rejected','已拒绝'], CANCELLED: ['b-cancelled','已取消'] };
+      data.forEach(function(a){
+        var it = document.createElement('div');
+        it.className = 'query-item';
+        var b = badge[a.status] || ['b-pending', a.status];
+        it.innerHTML =
+          '<div class="q-line"><span class="q-no">编号 ' + esc(a.nanoId || '') + '</span> · ' + esc(a.labName || '') + ' · ' + esc(a.workstationCode || '') +
+          ' <span class="badge ' + b[0] + '">' + b[1] + '</span></div>' +
+          '<div class="q-line">使用期限：' + esc(a.startMonth) + ' ~ ' + esc(a.endMonth) + '</div>' +
+          '<div class="q-line">申请人：' + esc(a.studentName) + '(' + esc(a.studentNo) + ') ' + esc(a.gradeName) + ' · 导师：' + esc(a.mentorName) + '</div>' +
+          (a.rejectReason ? '<div class="q-line" style="color:#c0392b">拒绝原因：' + esc(a.rejectReason) + '</div>' : '') +
+          '<div class="q-line" style="color:#8a9baa">提交时间：' + esc((a.sysCreateDatetime || '').replace('T', ' ')) + '</div>';
+        list.appendChild(it);
+      });
+    }).catch(function(e){ msg('msgQuery', '查询失败：' + e, false); });
+  };
+
+  bindAutoGrade();
+  loadBase();
+})();
+</script>
+</body>
+</html>

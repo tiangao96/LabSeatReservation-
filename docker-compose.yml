@@ -1,0 +1,99 @@
+# ---------------------------------------------------------------------------
+# 一键复现环境：MariaDB + Redis + 应用本体
+#
+#   docker compose up -d            # 起全套（db + redis + app）
+#   docker compose logs -f app      # 看应用日志
+#   docker compose down -v          # 停并清库
+#
+# 数据库初始化：sql/schema.sql 通过 /docker-entrypoint-initdb.d/ 自动导入。
+# 该脚本刻意只使用 MySQL 8 与 MariaDB 10.5+ 都支持的字符集/排序规则
+# （utf8mb4 / utf8mb4_unicode_ci / utf8mb4_bin），不使用 MySQL 8 专有的
+# utf8mb4_0900_* 规则，因此换用 MySQL 8 镜像也能直接跑。
+#
+# 应用默认以 prod profile 启动；为便于评审时直接登录调试，
+# 这里把 RSA 登录加密关掉（APP_CRYPTO_RSA_ENABLED=false）。
+# 真实部署请打开并注入 config/rsa.env，见 README。
+# ---------------------------------------------------------------------------
+
+services:
+
+  db:
+    image: mariadb:11.4
+    container_name: lab-db
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MARIADB_ROOT_PASSWORD: root_pw_change_me
+      MARIADB_DATABASE: lab_reservation
+      MARIADB_USER: lab_reservation
+      MARIADB_PASSWORD: lab_reservation_pw
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./sql/data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: lab-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lab-reservation-system:1.0.0
+    container_name: lab-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: "8080"
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: lab_reservation
+      DB_USER: lab_reservation
+      DB_PASS: lab_reservation_pw
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_DB: "0"
+      JWT_SECRET: "change-me-to-a-random-secret-of-at-least-32-bytes-0123456789"
+      APP_CRYPTO_RSA_ENABLED: "false"
+    ports:
+      - "8080:8080"
+    volumes:
+      - app-uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/v3/api-docs"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+
+volumes:
+  db-data:
+  redis-data:
+  app-uploads:

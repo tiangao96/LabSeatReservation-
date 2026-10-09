@@ -1,0 +1,9 @@
+.git
+target
+*.iml
+.idea
+uploads
+uploads-dev
+*.log
+*.jar
+*.tgz

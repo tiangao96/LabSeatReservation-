@@ -1,0 +1,16 @@
+# build artifacts / secrets
+*.jar
+*.tar.gz
+node_modules/
+dist/
+*.log
+.env
+application-local.yml
+**/config/app.env
+**/config/rsa.env
+*.pem
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+target/

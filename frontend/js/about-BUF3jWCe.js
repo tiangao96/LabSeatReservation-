@@ -1,0 +1,1 @@
+import{I as e,O as t,Vt as n,o as r,tt as i}from"./vue-core-Cvh10b_J.js";import{p as a}from"./src-dyk27duv.js";var o=e(r(r({},{name:`About`}),{},{__name:`index`,setup(e){return(e,r)=>(i(),t(n(a)))}}));export{o as default};

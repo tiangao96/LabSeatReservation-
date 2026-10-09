@@ -1,0 +1,47 @@
+# 开发/评审用配置（spring.profiles.active=dev 时加载）。
+#
+# 目标：`mvn spring-boot:run` 在**零外部依赖**的情况下也能把服务起起来。
+#   - 数据库：H2 内存库（MySQL 兼容模式），schema 由 Hibernate 依据实体自动建
+#   - Redis ：默认指向本机 6379。Redis 不可用时应用**仍能启动**（RedisWarmupRunner
+#             会重试 5 次后仅告警），但登录等依赖会话的功能需要 Redis 才能工作。
+#             需要完整体验时请用仓库根目录的 docker compose（自带 MariaDB + Redis）。
+#   - RSA ：关闭，登录直接用明文密码，方便调试
+#
+# 需要贴近生产的配置时请改用 prod profile，见 application-prod.yml。
+spring:
+  datasource:
+    url: "jdbc:h2:mem:lab_reservation;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+      timeout: 2000ms
+
+app:
+  jwt:
+    secret: "dev-only-secret-change-me-0123456789abcdef0123456789abcdef"
+  crypto:
+    rsa:
+      enabled: false
+  storage:
+    upload-dir: ./uploads-dev
+
+logging:
+  level:
+    com.lab: DEBUG

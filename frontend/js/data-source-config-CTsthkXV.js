@@ -1,0 +1,1 @@
+import{A as e,I as t,o as n,tt as r}from"./vue-core-Cvh10b_J.js";var i={class:`stub`},a=t(n(n({},{name:`DataSourceConfig`}),{},{__name:`data-source-config`,props:{modelValue:{},readonly:{type:Boolean},workflowMode:{type:Boolean}},emits:[`update:modelValue`],setup(t){return(t,n)=>(r(),e(`div`,i,`DataSourceConfig (未实现)`))}}));export{a as default};

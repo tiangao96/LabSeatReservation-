@@ -1,0 +1,1 @@
+import{I as e,O as t,Vt as n,o as r,tt as i}from"./vue-core-Cvh10b_J.js";import{t as a}from"./src-wYtYYgIc.js";import{c as o}from"./src-dyk27duv.js";var s=e(r(r({},{name:`QrCodeLogin`}),{},{__name:`qrcode-login`,setup(e){return(e,r)=>(i(),t(n(o),{"login-path":n(a)},null,8,[`login-path`]))}}));export{s as default};

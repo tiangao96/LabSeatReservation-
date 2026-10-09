@@ -1,0 +1,1 @@
+import{I as e,O as t,Vt as n,tt as r}from"./vue-core-Cvh10b_J.js";import{o as i}from"./src-dyk27duv.js";var a=e({__name:`coming-soon`,setup(e){return(e,a)=>(r(),t(n(i),{status:`coming-soon`}))}});export{a as default};

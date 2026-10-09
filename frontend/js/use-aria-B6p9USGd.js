@@ -1,0 +1,1 @@
+import{l as e,w as t}from"./install--2kvGNhX.js";var n=`update:modelValue`,r=`change`,i=`input`,a=e({ariaLabel:String,ariaOrientation:{type:String,values:[`horizontal`,`vertical`,`undefined`]},ariaControls:String}),o=e=>t(a,e);export{n as a,i,o as n,r,a as t};

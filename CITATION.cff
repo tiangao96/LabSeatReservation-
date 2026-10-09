@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the accompanying article (preferred-citation) and/or this software entry."
+title: "<SOFTWARE TITLE - TO FILL>"
+abstract: >-
+  LabWorkstation: a web-based laboratory workstation reservation and
+  usage-accounting platform for university teaching laboratories. It manages
+  laboratory rooms, workstation layout modelling (seat / door / window
+  primitives), reservation requests and approvals, monthly rental accounting,
+  occupancy history with two-stage conflict detection, role-based access
+  control and operation auditing.
+version: "1.0.0"
+date-released: "2026-10-09"
+license: MIT
+repository-code: "https://github.com/tiangao96/Gao1"
+authors:
+  - family-names: "Gao"
+    given-names: "Tian"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+keywords:
+  - laboratory management
+  - workstation reservation
+  - usage accounting
+  - Spring Boot
+  - web application
+preferred-citation:
+  type: article
+  title: "<PAPER TITLE - TO FILL>"
+  authors:
+    - family-names: "Gao"
+      given-names: "Tian"
+  journal: "SoftwareX"
+  # volume: ""
+  # issue: ""
+  # year: 2026
+  # doi: "10.1016/j.softx.XXXX.XXXXXX"
+  # issn: "2352-7110"

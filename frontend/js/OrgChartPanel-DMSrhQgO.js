@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-C19UIDSr.js";import{A as t,I as n,o as r,tt as i}from"./vue-core-Cvh10b_J.js";var a={class:`stub`},o=n(r(r({},{name:`OrgChartPanel`}),{},{__name:`OrgChartPanel`,props:{userId:{},showModeToggle:{type:Boolean}},setup(e){return(e,n)=>(i(),t(`div`,a,`OrgChartPanel (未实现)`))}})),s=e({default:()=>c}),c=o;export{s as n,c as t};

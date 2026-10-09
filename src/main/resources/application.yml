@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: lab-server
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+      timeout: 2000ms
+  servlet:
+    multipart:
+      max-file-size: 5MB        # 单文件上限（头像等）
+      max-request-size: 10MB
+
+server:
+  port: ${SERVER_PORT:8080}       # 端口单一真值：由部署脚本 export SERVER_PORT 注入，缺省 8080
+  servlet:
+    context-path: /
+
+# JPA / Hibernate
+spring.jpa:
+  open-in-view: false
+  hibernate.ddl-auto: none          # schema 由 sql/schema.sql 管理
+  show-sql: true
+  properties.hibernate:
+    format_sql: true
+    auto_quote_keyword: true        # 自动给 order/query 等保留字加引号
+    default_batch_fetch_size: 50
+
+# JWT
+app:
+  jwt:
+    secret: "${JWT_SECRET:}"
+    access-ttl-minutes: 120
+    refresh-ttl-days: 7
+    issuer: lab-reservation
+  storage:
+    upload-dir: ./uploads        # 文件落盘根目录（相对应用工作目录）
+    url-prefix: /uploads         # 对外静态资源 URL 前缀（须与 SecurityConfig 放行一致）
+    avatar-max-bytes: 5242880    # 5MB
+    avatar-max-dimension: 256    # 头像归一化最大边长(px)，等比缩放不放大
+  crypto:
+    rsa:
+      enabled: false                # 默认关闭；开启后 /api/auth/login 的 password 须为 RSA 密文(base64)
+      public-key: ${RSA_PUBLIC_KEY:}   # PEM 或裸 base64（X.509 公钥），非敏感
+      private-key: ${RSA_PRIVATE_KEY:} # PEM 或裸 base64（PKCS#8 私钥），务必走环境变量，勿提交
+  workstation:
+    expiry-cron: "0 5 0 * * *"      # 月租到期自动释放扫描（每天 00:05，错开整点）；Spring cron 写 "-" 可禁用
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    com.lab: DEBUG

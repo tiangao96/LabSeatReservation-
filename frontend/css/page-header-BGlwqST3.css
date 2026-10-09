@@ -1,0 +1,1 @@
+.lab-header-spin{animation:1s linear infinite lab-header-spin}@keyframes lab-header-spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="700" fill="#ffffff"/>
+  <text x="500" y="40" text-anchor="middle" font-size="25" font-weight="700" fill="#1f2328">LabWorkstation — System Architecture</text>
+  <text x="500" y="66" text-anchor="middle" font-size="14" fill="#57606a">Four-tier, browser-based platform for reserving and accounting shared university laboratories</text>
+
+  <g>
+    <rect x="60" y="96" width="880" height="92" rx="10" fill="#eef4ff" stroke="#b6c8f2"/>
+    <text x="86" y="126" font-size="16" font-weight="700" fill="#0b4bb0">Presentation tier — Vue 3 single-page application</text>
+    <text x="86" y="152" font-size="13" fill="#3a4351">Vue 3 + TypeScript · Vben Admin UI · Pinia store · runtime Chinese / English switching</text>
+    <text x="86" y="174" font-size="13" fill="#3a4351">HTML5 Canvas floor-plan editor and viewer (seat / door / window primitives)</text>
+  </g>
+  <line x1="500" y1="188" x2="500" y2="214" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+  <text x="516" y="206" font-size="12" fill="#57606a">HTTPS · JSON</text>
+
+  <g>
+    <rect x="60" y="218" width="880" height="92" rx="10" fill="#f0f8f1" stroke="#b7dcbd"/>
+    <text x="86" y="248" font-size="16" font-weight="700" fill="#1a7f37">API tier — REST over HTTP / JSON (base path /api)</text>
+    <text x="86" y="274" font-size="13" fill="#3a4351">JWT bearer authentication (RSA-encrypted credential exchange) · stateless session</text>
+    <text x="86" y="296" font-size="13" fill="#3a4351">Role-based access control — roles, menus, permissions enforced per endpoint</text>
+  </g>
+  <line x1="500" y1="310" x2="500" y2="336" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="60" y="340" width="880" height="140" rx="10" fill="#fff8ec" stroke="#f0d9a8"/>
+    <text x="86" y="370" font-size="16" font-weight="700" fill="#9a6700">Application tier — Spring Boot 3.5 service layer</text>
+    <rect x="86" y="386" width="196" height="34" rx="6" fill="#fff" stroke="#e3c98d"/>
+    <text x="184" y="408" text-anchor="middle" font-size="12.5" fill="#3a4351">Laboratories &amp; workstations</text>
+    <rect x="294" y="386" width="196" height="34" rx="6" fill="#fff" stroke="#e3c98d"/>
+    <text x="392" y="408" text-anchor="middle" font-size="12.5" fill="#3a4351">Layout primitives (SEAT/DOOR/WINDOW)</text>
+    <rect x="502" y="386" width="196" height="34" rx="6" fill="#fff" stroke="#e3c98d"/>
+    <text x="600" y="408" text-anchor="middle" font-size="12.5" fill="#3a4351">Rental-request workflow</text>
+    <rect x="710" y="386" width="204" height="34" rx="6" fill="#fff" stroke="#e3c98d"/>
+    <text x="812" y="408" text-anchor="middle" font-size="12.5" fill="#3a4351">Occupancy &amp; conflict detection</text>
+    <rect x="86" y="428" width="196" height="34" rx="6" fill="#fff" stroke="#e3c98d"/>
+    <text x="184" y="450" text-anchor="middle" font-size="12.5" fill="#3a4351">Usage accounting (seat-months)</text>
+    <rect x="294" y="428" width="196" height="34" rx="6" fill="#fff" stroke="#e3c98d"/>
+    <text x="392" y="450" text-anchor="middle" font-size="12.5" fill="#3a4351">Workstation status machine</text>
+    <rect x="502" y="428" width="196" height="34" rx="6" fill="#fff" stroke="#e3c98d"/>
+    <text x="600" y="450" text-anchor="middle" font-size="12.5" fill="#3a4351">Audit log &amp; scheduled jobs</text>
+  </g>
+  <line x1="500" y1="480" x2="500" y2="506" stroke="#57606a" stroke-width="2" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="60" y="510" width="430" height="76" rx="10" fill="#fdeef0" stroke="#e7bed0"/>
+    <text x="86" y="538" font-size="15" font-weight="700" fill="#b3245a">Persistence — MariaDB 10.x</text>
+    <text x="86" y="562" font-size="12.5" fill="#3a4351">Relational schema (schema.sql) via JPA / Hibernate</text>
+    <rect x="510" y="510" width="430" height="76" rx="10" fill="#fdeef0" stroke="#e7bed0"/>
+    <text x="536" y="538" font-size="15" font-weight="700" fill="#b3245a">Cache — Redis 7</text>
+    <text x="536" y="562" font-size="12.5" fill="#3a4351">Session / lookup caching and scheduled-release coordination</text>
+  </g>
+
+  <g>
+    <rect x="60" y="606" width="880" height="66" rx="10" fill="#f4f4f6" stroke="#cfd4da"/>
+    <text x="86" y="632" font-size="14" font-weight="700" fill="#3a4351">Deployment — Nginx (static assets + reverse proxy) · Docker / docker-compose · JDK 17 · Maven</text>
+    <text x="86" y="656" font-size="12.5" fill="#57606a">Front-end build artifacts served as static files; back-end packaged as a single executable JAR</text>
+  </g>
+</svg>

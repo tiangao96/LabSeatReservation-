@@ -1,4 +1,4 @@
-# LabWorkstation
+# LabSeatReservation System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/tiangao96/Gao1/releases)
@@ -7,13 +7,13 @@
 [![Vue](https://img.shields.io/badge/Vue-3-42b883.svg)](https://vuejs.org/)
 [![DOI](https://img.shields.io/badge/DOI-pending-lightgrey.svg)](#citation)
 
-**LabWorkstation** is an open-source, browser-based platform that turns the management of shared
+**LabSeatReservation** is an open-source, browser-based platform that turns the management of shared
 university laboratories into a single accountable workflow. It **visualizes seat allocation on
 editable floor plans**, runs a **reviewed reservation workflow**, and **derives monthly
 occupancy-based space charges automatically** from the same occupancy records.
 
 > Companion paper: *Visualizing seat allocation and automating space-charge calculations in shared
-> university laboratories: The LabWorkstation platform* (submitted to **SoftwareX**).
+> university laboratories: The LabSeatReservation System* (submitted to **SoftwareX**).
 
 ![Laboratory floor plan showing the current state of every seat](docs/images/fig6-floorplan.png)
 
@@ -26,7 +26,7 @@ occupancy-based space charges automatically** from the same occupancy records.
 Managing shared research laboratories involves complex challenges in safety accountability,
 multi-facility seat allocation, and occupancy-based space-charge calculation. Traditional
 spreadsheet-based tracking fragments group allocation views across rooms and hinders historical
-billing traceability. To address these issues, we present **LabWorkstation**, an open-source web
+billing traceability. To address these issues, we present **LabSeatReservation**, an open-source web
 application that unifies seat lifecycle management with a real-time floor-plan interface and an
 automated historical accounting engine. A five-state machine (`IDLE`, `PRE_RESERVED`, `OCCUPIED`,
 `MAINTENANCE`, `DISABLED`) with dual-stage conflict detection prevents two groups from taking the
@@ -49,7 +49,7 @@ companion paper; laboratory and group names anonymized).
 
 ---
 
-## Why LabWorkstation?
+## Why LabSeatReservation?
 
 In shared laboratories, workstations are treated as common resources that move between research
 groups, go to maintenance, and are charged back by occupied floor area. These events — the group
@@ -57,7 +57,7 @@ responsible, the occupancy interval and the floor area — are usually kept in s
 change often, the same seat ends up counted twice, and the monthly charge is recomputed by hand
 every time.
 
-LabWorkstation keeps one source of truth instead: a **floor plan**, an **occupancy history** and a
+LabSeatReservation keeps one source of truth instead: a **floor plan**, an **occupancy history** and a
 **monthly accounting view** are all derived from the same records, so no figure has to be
 re-entered.
 
@@ -180,12 +180,12 @@ concurrent editing of the same floor plan) is not yet characterized.
 
 ## Citation
 
-If you use LabWorkstation in academic work, please cite it. Machine-readable metadata is provided in
+If you use LabSeatReservation in academic work, please cite it. Machine-readable metadata is provided in
 [`CITATION.cff`](CITATION.cff); a DOI will be minted via Zenodo on the first archived release.
 
 ```bibtex
-@software{labworkstation,
-  title        = {LabWorkstation: Visualizing seat allocation and automating space-charge
+@software{labseatreservation,
+  title        = {LabSeatReservation System: Visualizing seat allocation and automating space-charge
                   calculations in shared university laboratories},
   author       = {Gao, Tian and Ye, AiPeng and Huang, GuiJian and Gao, ZhiJian and Ou, Yang Yang},
   year         = {2026},

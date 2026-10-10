@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite the accompanying article (preferred-citation) and/or this software entry."
 title: "<SOFTWARE TITLE - TO FILL>"
 abstract: >-
-  LabWorkstation: a web-based laboratory workstation reservation and
+  LabSeatReservation System: a web-based laboratory seat reservation and
   usage-accounting platform for university teaching laboratories. It manages
   laboratory rooms, workstation layout modelling (seat / door / window
   primitives), reservation requests and approvals, monthly rental accounting,

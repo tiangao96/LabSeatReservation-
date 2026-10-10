@@ -15,7 +15,37 @@ occupancy-based space charges automatically** from the same occupancy records.
 > Companion paper: *Visualizing seat allocation and automating space-charge calculations in shared
 > university laboratories: The LabWorkstation platform* (submitted to **SoftwareX**).
 
-![Floor-plan editor](docs/images/floor-plan.png)
+![Laboratory floor plan showing the current state of every seat](docs/images/fig6-floorplan.png)
+
+---
+
+## Overview
+
+> Abstract of the companion paper.
+
+Managing shared research laboratories involves complex challenges in safety accountability,
+multi-facility seat allocation, and occupancy-based space-charge calculation. Traditional
+spreadsheet-based tracking fragments group allocation views across rooms and hinders historical
+billing traceability. To address these issues, we present **LabWorkstation**, an open-source web
+application that unifies seat lifecycle management with a real-time floor-plan interface and an
+automated historical accounting engine. A five-state machine (`IDLE`, `PRE_RESERVED`, `OCCUPIED`,
+`MAINTENANCE`, `DISABLED`) with dual-stage conflict detection prevents two groups from taking the
+same workstation-month. The same occupancy rows drive a floor plan, a month-by-month grid, and
+workstation-month and area-month totals per group. The software is implemented in Java (Spring Boot
+3.5) and TypeScript (Vue 3), uses MariaDB and Redis, and is released under the MIT License. It has
+been deployed in four shared laboratories (155 workstations, 28 mentor groups).
+
+## Screenshots
+
+**Usage statistics** — seat-months and the corresponding floor area for each mentor group over a
+selected period.
+
+![Usage statistics page](docs/images/fig5-usage-statistics.png)
+
+**Floor plan** — the seats of a laboratory shown in their current states (figure taken from the
+companion paper; laboratory and group names anonymized).
+
+![Laboratory floor plan](docs/images/fig6-floorplan.png)
 
 ---
 
@@ -176,5 +206,6 @@ University (Grant No. 309-000002031251).
 
 ---
 
-> The figures above are **schematic architecture and workflow diagrams**, not screenshots of live
-> data. The repository ships only synthetic demo data.
+> The architecture, workflow and state-machine figures are **schematic diagrams**. The screenshots
+> are taken from the companion paper and use anonymized laboratory and group names; the repository
+> ships only synthetic demo data.

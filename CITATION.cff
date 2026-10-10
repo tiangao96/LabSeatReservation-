@@ -11,7 +11,7 @@ abstract: >-
 version: "1.0.0"
 date-released: "2026-10-09"
 license: MIT
-repository-code: "https://github.com/tiangao96/Gao1"
+repository-code: "https://github.com/tiangao96/LabSeatReservation"
 authors:
   - family-names: "Gao"
     given-names: "Tian"

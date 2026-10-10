@@ -1,7 +1,7 @@
 # LabSeatReservation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/tiangao96/Gao1/releases)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/tiangao96/LabSeatReservation/releases)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Vue](https://img.shields.io/badge/Vue-3-42b883.svg)](https://vuejs.org/)
@@ -190,7 +190,7 @@ If you use LabSeatReservation in academic work, please cite it. Machine-readable
   year         = {2026},
   version      = {1.0.0},
   license      = {MIT},
-  url          = {https://github.com/tiangao96/Gao1}
+  url          = {https://github.com/tiangao96/LabSeatReservation}
 }
 ```
 

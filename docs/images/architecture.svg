@@ -5,7 +5,7 @@
     </marker>
   </defs>
   <rect width="1000" height="700" fill="#ffffff"/>
-  <text x="500" y="40" text-anchor="middle" font-size="25" font-weight="700" fill="#1f2328">LabSeatReservation System — Architecture</text>
+  <text x="500" y="40" text-anchor="middle" font-size="25" font-weight="700" fill="#1f2328">LabSeatReservation — Architecture</text>
   <text x="500" y="66" text-anchor="middle" font-size="14" fill="#57606a">Four-tier, browser-based platform for reserving and accounting shared university laboratories</text>
 
   <g>

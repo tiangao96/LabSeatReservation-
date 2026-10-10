@@ -1,4 +1,4 @@
-# LabSeatReservation System
+# LabSeatReservation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/tiangao96/Gao1/releases)
@@ -13,7 +13,7 @@ editable floor plans**, runs a **reviewed reservation workflow**, and **derives 
 occupancy-based space charges automatically** from the same occupancy records.
 
 > Companion paper: *Visualizing seat allocation and automating space-charge calculations in shared
-> university laboratories: The LabSeatReservation System* (submitted to **SoftwareX**).
+> university laboratories: The LabSeatReservation platform* (submitted to **SoftwareX**).
 
 ![Laboratory floor plan showing the current state of every seat](docs/images/fig6-floorplan.png)
 
@@ -185,8 +185,7 @@ If you use LabSeatReservation in academic work, please cite it. Machine-readable
 
 ```bibtex
 @software{labseatreservation,
-  title        = {LabSeatReservation System: Visualizing seat allocation and automating space-charge
-                  calculations in shared university laboratories},
+  title        = {Visualizing seat allocation and automating space-charge calculations in shared university laboratories: The LabSeatReservation platform},
   author       = {Gao, Tian and Ye, AiPeng and Huang, GuiJian and Gao, ZhiJian and Ou, Yang Yang},
   year         = {2026},
   version      = {1.0.0},
